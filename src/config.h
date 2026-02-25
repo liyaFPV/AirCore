@@ -16,12 +16,19 @@
 // ==== Wi-Fi ====
 #define WIFIAP_PASSWORD "123456789"
 
-#define buzzerTimeout 60000 // 1 минута
+#define buzzerTimeout 30000
 
-#define FW_VERSION "0.2B"
+#define FW_VERSION "0.3B"
 
 // ==== Shared globals ====
 extern int co2ppm;
 extern float temperature;
 extern float humidity;
 extern String deviceName;
+
+// ==== LED settings ====
+// Глобальная яркость (0-255). Меняйте в одном месте.
+#define LED_BRIGHTNESS 128
+extern uint8_t ledBrightness;
+void led_set(uint8_t r, uint8_t g, uint8_t b);
+void led_init();
