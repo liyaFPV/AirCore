@@ -1,33 +1,18 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 #include <DHT.h>
+#include "config.h"
+#include "web.h"
 
-// ==== ПИНЫ ====
-#define SDA_PIN 8
-#define SCL_PIN 9
-#define DHTPIN 4
-#define DHTTYPE DHT11   // если DHT11 → поменяй
-#define MHZ_RX 5
-#define MHZ_TX 6
-#define buzzerPin 7
-#define butonPint 0
-#define ledRedPin 10
-#define ledGreenPin 20
-#define ledBluePin 21
-
-// ==== OLED ====
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
 
 int co2ppm = 0;
 float temperature = 0;
 float humidity = 0;
+unsigned long buzzerTimer = 0;
+unsigned long badCo2Start = 0;
+bool co2Bad = false;
 
 // ==== Чтение MH-Z19C ====
 void readMHZ19() {
@@ -47,26 +32,20 @@ void readMHZ19() {
 
 void setup() {
     Serial.begin(115200);
-
-    Wire.begin(SDA_PIN, SCL_PIN);
-
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-        Serial.println("OLED не найден");
-        while (true);
-    }
-
-    display.clearDisplay();
-    display.setTextSize(1);
-    display.setTextColor(SSD1306_WHITE);
-
     dht.begin();
-
     mhzSerial.begin(9600, SERIAL_8N1, MHZ_RX, MHZ_TX);
-
-    display.setCursor(0,0);
-    display.println("Meteo Station");
-    display.display();
+    pinMode(butonPint, INPUT_PULLUP);
+    pinMode(buzzerPin, OUTPUT);
+    pinMode(ledRedPin, OUTPUT);
+    pinMode(ledGreenPin, OUTPUT);
+    pinMode(ledBluePin, OUTPUT);
+    analogWrite(ledRedPin, 255);
+    analogWrite(ledGreenPin, 255);    
+    analogWrite(ledBluePin, 255);
+    tone(buzzerPin, 125, 500);
     delay(2000);
+    Serial.println("START");
+    initWiFi();
 }
 
 void loop() {
@@ -74,24 +53,47 @@ void loop() {
     humidity = dht.readHumidity();
     readMHZ19();
 
-    display.clearDisplay();
-    display.setCursor(0,0);
+    if(co2ppm < 800){
+        analogWrite(ledRedPin, 0);
+        analogWrite(ledGreenPin, 255);    
+        analogWrite(ledBluePin, 0);
+        noTone(buzzerPin);
+    }else if(co2ppm < 1200 and co2ppm >= 800){
+        analogWrite(ledRedPin, 255);
+        analogWrite(ledGreenPin, 255);    
+        analogWrite(ledBluePin, 0);
+        noTone(buzzerPin);
+    }else if (co2ppm >= 1200) {
 
-    display.println("=== Meteo ===");
+    if (!co2Bad) {
+        badCo2Start = millis();
+        co2Bad = true;
+    }
 
-    display.print("Temp: ");
-    display.print(temperature);
-    display.println(" C");
+    if (millis() - badCo2Start >= 300000) { // 5 минут
+        if (millis() - buzzerTimer >= 60000) {
+            tone(buzzerPin, 1000, 1000);
+            buzzerTimer = millis();
+        }
+    }
+    } else {
+        co2Bad = false;
+    }
+    
 
-    display.print("Hum:  ");
-    display.print(humidity);
-    display.println(" %");
-
-    display.print("CO2:  ");
-    display.print(co2ppm);
-    display.println(" ppm");
-
-    display.display();
-
-    delay(3000);
+    Serial.println();
+    Serial.println("=== Meteo ===");
+    Serial.print("Temp: ");
+    Serial.print(temperature);
+    Serial.println(" C");
+    Serial.print("Hum:  ");
+    Serial.print(humidity);
+    Serial.println(" %");
+    Serial.print("CO2:  ");
+    Serial.print(co2ppm);
+    Serial.println(" ppm");
+    Serial.println();
+    Serial.println("Butn: " + String(digitalRead(butonPint) == LOW ? "Pressed" : "Released"));
+    Serial.println("================");
+    delay(1000);
 }
