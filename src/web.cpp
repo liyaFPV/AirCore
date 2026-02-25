@@ -3,6 +3,8 @@
 Preferences prefs;
 WebServer server(80);
 
+String deviceName;
+
 String ssid;
 String pass;
 
@@ -25,8 +27,6 @@ Password:<br>
 </body>
 </html>
 )rawliteral";
-
-String deviceName;
 
 void generateDeviceName() {
 
@@ -133,7 +133,7 @@ void startConfigPortal() {
 void initWiFi() {
     generateDeviceName();
     loadConfig();
-    if(digitalRead(butonPint) == LOW){
+    if(button.press()){
         Serial.println("Button pressed, starting config portal...");
         startConfigPortal();
         return;

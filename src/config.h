@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 // ==== ПИНЫ ====
 #define SDA_PIN 8
 #define SCL_PIN 9
@@ -6,7 +8,7 @@
 #define MHZ_RX 5
 #define MHZ_TX 6
 #define buzzerPin 7
-#define butonPint 10
+#define butonPin 10
 #define ledRedPin 3
 #define ledGreenPin 2
 #define ledBluePin 1
@@ -16,4 +18,10 @@
 
 #define buzzerTimeout 60000 // 1 минута
 
-#define FM_VERSION "0.2B"
+#define FW_VERSION "0.2B"
+
+// ==== Shared globals ====
+extern int co2ppm;
+extern float temperature;
+extern float humidity;
+extern String deviceName;

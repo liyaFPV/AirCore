@@ -3,6 +3,7 @@
 #include <DHT.h>
 #include "config.h"
 #include "web.h"
+#include "oled.h"
 
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
@@ -32,9 +33,9 @@ void readMHZ19() {
 
 void setup() {
     Serial.begin(115200);
+    oled_init();
     dht.begin();
     mhzSerial.begin(9600, SERIAL_8N1, MHZ_RX, MHZ_TX);
-    pinMode(butonPint, INPUT_PULLUP);
     pinMode(buzzerPin, OUTPUT);
     pinMode(ledRedPin, OUTPUT);
     pinMode(ledGreenPin, OUTPUT);
@@ -49,6 +50,7 @@ void setup() {
 }
 
 void loop() {
+    button.tick();
     temperature = dht.readTemperature();
     humidity = dht.readHumidity();
     readMHZ19();
@@ -93,7 +95,7 @@ void loop() {
     Serial.print(co2ppm);
     Serial.println(" ppm");
     Serial.println();
-    Serial.println("Butn: " + String(digitalRead(butonPint) == LOW ? "Pressed" : "Released"));
     Serial.println("================");
     delay(1000);
+    oled_tikc();
 }
