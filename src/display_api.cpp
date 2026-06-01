@@ -1,4 +1,5 @@
 #include "display_api.h"
+#include <Arduino.h>
 GxEPD2_BW<GxEPD2_290_T94_V2, GxEPD2_290_T94_V2::HEIGHT> display(GxEPD2_290_T94_V2(CS_PIN, DC_PIN, RST_PIN, BUSY_PIN));
 
 U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit;
@@ -7,7 +8,21 @@ void elink_init() {
   // hardware SPI с кастомными пинами
   #define ENABLE_GxEPD2_GFX 0
   SPI.begin(CLK_PIN, -1, DIN_PIN, CS_PIN); // SCK, MISO(-1), MOSI, CS
+
+  Serial.printf("elink_init: CS=%d DC=%d RST=%d BUSY=%d CLK=%d DIN=%d\n", CS_PIN, DC_PIN, RST_PIN, BUSY_PIN, CLK_PIN, DIN_PIN);
+
+  // configure pins for reset/busy
+  pinMode(BUSY_PIN, INPUT);
+  pinMode(RST_PIN, OUTPUT);
+
+  // hardware reset pulse
+  digitalWrite(RST_PIN, LOW);
+  delay(10);
+  digitalWrite(RST_PIN, HIGH);
+  delay(10);
+
   display.init(0);
+  Serial.println("display.init done");
   display.setRotation(1);
   display.fillScreen(GxEPD_WHITE);
   u8g2_for_adafruit.begin(display);
