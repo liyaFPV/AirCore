@@ -1,10 +1,15 @@
 #include <Arduino.h>
 
 // ==== ПИНЫ ====
-#define SDA_PIN 8
-#define SCL_PIN 9
+#define CS_PIN    11
+#define DC_PIN    10
+#define RST_PIN   9
+#define BUSY_PIN  8
+#define CLK_PIN   12  // SCK
+#define DIN_PIN   13  // MOSI
+
 #define DHTPIN 4
-#define DHTTYPE DHT11   // если DHT11 → поменяй
+#define DHTTYPE DHT11
 #define MHZ_RX 5
 #define MHZ_TX 6
 #define buzzerPin 7

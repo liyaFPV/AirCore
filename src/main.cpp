@@ -3,11 +3,13 @@
 #include <DHT.h>
 #include "config.h"
 #include "web.h"
-#include "oled.h"
+#include <uButton.h>
+#include "display_api.h"
 #include "led.h"
 
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
+uButton button(butonPin);
 
 int co2ppm = 0;
 float temperature = 0;
@@ -53,7 +55,6 @@ void readMHZ19() {
 
 void setup() {
     Serial.begin(115200);
-    oled_init();
     dht.begin();
     mhzSerial.begin(9600, SERIAL_8N1, MHZ_RX, MHZ_TX);
     pinMode(buzzerPin, OUTPUT);
@@ -64,36 +65,12 @@ void setup() {
 
 void loop() {
     button.tick();
-    
-    // Ограничиваем частоту чтения датчиков до 2 сек
-    if (millis() - lastSensorRead >= 2000) {
+    if (millis() - lastSensorRead >= 1000) {
         temperature = dht.readTemperature();
         humidity = dht.readHumidity();
         readMHZ19();
         lastSensorRead = millis();
-        
-        // Управление индикаторами и зуммером
-        if(co2ppm < 800) {
-            led_set(0, 255, 0);
-            noTone(buzzerPin);
-        } else if(co2ppm < 1200) {
-            led_set(255, 255, 0);
-            noTone(buzzerPin);
-        } else {
-            led_set(255, 0, 0);
-            
-            if (!co2Bad) {
-                badCo2Start = millis();
-                co2Bad = true;
-                buzzerTimer = 0;
-            }
-            if (millis() - badCo2Start >= 300000 && millis() - buzzerTimer >= 60000) {
-                tone(buzzerPin, 1000, 500);
-                buzzerTimer = millis();
-            }
-        }
-        if (co2ppm < 1200) co2Bad = false;
+        printf("Temp: %.1f C, Humidity: %.1f %%, CO2: %d ppm\n", temperature, humidity, co2ppm);
     }
-    
-    oled_tikc();
+
 }

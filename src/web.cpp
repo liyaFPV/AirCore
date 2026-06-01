@@ -1,5 +1,4 @@
 #include "web.h"
-#include "led.h"
 
 Preferences prefs;
 WebServer server(80);
@@ -57,7 +56,6 @@ bool connectWiFi() {
 
 // ===== Режим настройки (БЛОКИРУЮЩИЙ) =====
 void startConfigPortal() {
-    led_set(0, 0, 255);
     WiFi.mode(WIFI_AP);
     WiFi.softAP(deviceName.c_str(), WIFIAP_PASSWORD);
 
@@ -84,14 +82,8 @@ void startConfigPortal() {
 void initWiFi() {
     generateDeviceName();
     loadConfig();
-    if(button.press()){
-        startConfigPortal();
-        return;
-    }
-
     if (ssid.length() > 0 && connectWiFi()) {
         startMDNS();
-        led_set(0, 255, 0);
         return;
     }
     startConfigPortal();

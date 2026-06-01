@@ -4,6 +4,5 @@
 #include "config.h"
 #include <Preferences.h>
 #include <WebServer.h>
-#include "oled.h"
 
 void initWiFi();
