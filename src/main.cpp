@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <DHT.h>
 #include "config.h"
+#include "meteo.h"
 #include "web.h"
 #include <uButton.h>
 #include "display_api.h"
@@ -107,12 +108,13 @@ void setup() {
     pinMode(buzzerPin, OUTPUT);
     pinMode(led, OUTPUT);
     digitalWrite(led, LOW);
-    //initWiFi();
     elink_init();
     elink_clear();
     elink_setCursor(0, 0);
-    elink_print("test");
+    elink_print("Подключение к Wi-Fi...");
     elink_update();
+    initWiFi();
+    Serial.println(getMeteo());
 }
 
 void loop() {
