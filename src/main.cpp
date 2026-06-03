@@ -54,26 +54,12 @@ void readMHZ19() {
 
     if (mhzSerial.available() >= 9) {
         mhzSerial.readBytes(response, 9);
-        Serial.print("MHZ raw: ");
-        for (int i = 0; i < 9; i++) {
-            if (response[i] < 16) Serial.print('0');
-            Serial.print(response[i], HEX);
-            Serial.print(' ');
-        }
-        Serial.println();
-
         if (response[0] == 0xFF && response[1] == 0x86) {
             byte checksum = 0;
             for (int i = 1; i < 8; i++) {
                 checksum += response[i];
             }
             checksum = 0xFF - checksum + 1;
-            Serial.print("MHZ checksum: ");
-            if (checksum < 16) Serial.print('0');
-            Serial.print(checksum, HEX);
-            Serial.print(" expected ");
-            if (response[8] < 16) Serial.print('0');
-            Serial.println(response[8], HEX);
 
             if (checksum == response[8]) {
                 int value = (response[2] << 8) + response[3];
@@ -114,7 +100,10 @@ void setup() {
     elink_print("Подключение к Wi-Fi...");
     elink_update();
     initWiFi();
-    Serial.println(getMeteo());
+    MeteoInit();
+    Serial.println("");
+    MeteoParsing();
+    Serial.println("");
 }
 
 void loop() {
@@ -130,9 +119,6 @@ void loop() {
         humidity = dht.readHumidity();
         readMHZ19();
         lastSensorRead = millis();
-
-        printf("Temp: %.1f C, Humidity: %.1f %%, CO2: %d ppm (%s)\n",
-               temperature, humidity, co2ppm, co2StateName(co2State));
 
         char line1[64];
         char line2[64];

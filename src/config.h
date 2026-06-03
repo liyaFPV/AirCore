@@ -23,9 +23,7 @@
 
 #define LATITUDE 56.08
 #define LONGITUDE 54.27
-#define STRINGIFY_HELPER(x) #x
-#define STRINGIFY(x) STRINGIFY_HELPER(x)
-#define MeteoURL "https://api.open-meteo.com/v1/forecast?latitude=" STRINGIFY(LATITUDE) "&longitude=" STRINGIFY(LONGITUDE) "&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=auto&forecast_days=7"
+#define gmtOffset 5
 
 // ==== FW_VERSION ====
 #define FW_VERSION "1.1B"
