@@ -6,6 +6,7 @@
 #include "web.h"
 #include <uButton.h>
 #include "display_api.h"
+#include "menu.h"
 
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
@@ -126,7 +127,8 @@ void loop() {
         snprintf(line1, sizeof(line1), "Temp: %.1f C", temperature);
         snprintf(line2, sizeof(line2), "Humidity: %.1f %%", humidity);
         snprintf(line3, sizeof(line3), "CO2: %d ppm (%s)", co2ppm, co2StateName(co2State));
-
+        main_menu(int(co2ppm), int(humidity), int(temperature));
+        /*
         elink_clear();
         elink_setCursor(0, 0);
         elink_print(String(line1));
@@ -134,7 +136,7 @@ void loop() {
         elink_print(String(line2));
         elink_setCursor(0, 32);
         elink_print(String(line3));
-        elink_update();
+        elink_update();*/
     }
 
 }

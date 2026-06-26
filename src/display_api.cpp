@@ -66,3 +66,7 @@ void elink_sleep(){
 void elink_wakeUp(){
   elink_init();
 }
+
+void elink_setFont(const uint8_t *font) {
+  u8g2_for_adafruit.setFont(font);
+}

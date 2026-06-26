@@ -71,6 +71,19 @@ void startConfigPortal() {
     });
 
     server.begin();
+    elink_clear();
+    elink_setCursor(0, 0);
+    elink_print("Создана точка доступа для настройки");
+
+    elink_setCursor(0, 15);
+    String text="Имя:"+String(deviceName.c_str())+" Пароль:"+WIFIAP_PASSWORD;
+    elink_print(text);
+
+    elink_setCursor(0, 30);
+    elink_print("IP для настройки:192.168.4.1");
+
+
+    elink_update();
     while (true) {
         server.handleClient();
         delay(5);

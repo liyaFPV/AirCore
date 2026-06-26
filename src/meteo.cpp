@@ -6,7 +6,7 @@ JsonDocument doc;
 WeatherRecord Weather[6];
 
 void MeteoInit(){
-    NTP.begin(3);
+    NTP.begin(5);
     NTP.updateNow();
 }
 

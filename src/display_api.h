@@ -21,3 +21,4 @@ void elink_updateWindow(int16_t x, int16_t y, int16_t width, int16_t height);//�
 void elink_clear();//очистка дисплея
 void elink_sleep();//переход в спящий режим
 void elink_wakeUp();//выход из спящего режима
+void elink_setFont(const uint8_t *font);//выбор шрифта
