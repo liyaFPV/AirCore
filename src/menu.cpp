@@ -4,9 +4,9 @@ void draw_watch(int x,int y,const uint8_t *font){
   String time;
   if(NTP.minute()<10 and NTP.hour()<10){
     time=String("0")+String(NTP.hour())+":"+String("0")+String(NTP.minute());
-  }else if(NTP.minute()<10 and NTP.hour()>10){
+  }else if(NTP.minute()<10 and NTP.hour()>=10){
     time=String(NTP.hour())+":"+String("0")+String(NTP.minute());
-  }else if(NTP.minute()>10 and NTP.hour()<10){
+  }else if(NTP.minute()>=10 and NTP.hour()<10){
     time=String("0")+String(NTP.hour())+":"+String(NTP.minute());
   }else{
     time=String(NTP.hour())+":"+String(NTP.minute());
