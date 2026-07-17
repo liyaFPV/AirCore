@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 #include "config.h"
 #include <WiFi.h>
@@ -14,6 +15,8 @@ struct WeatherRecord {
     int w_code[24];
     String w_code_str[24];
 };
+
+extern WeatherRecord Weather[3];
 
 void MeteoInit();
 String getMeteo();

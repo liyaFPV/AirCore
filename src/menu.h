@@ -8,3 +8,4 @@
 #include <GyverNTP.h>
 
 void main_menu(int PPM,int HUM,int TEM);
+void draw_weather_widget(int x, int y, int temp, int windSpeed, int windDeg, String weatherStr, int hour);
