@@ -103,7 +103,7 @@ void setup() {
     initWiFi();
     MeteoInit();
     Serial.println("");
-    MeteoParsing();
+    getWeatherForecast(5);
     Serial.println("");
 }
 

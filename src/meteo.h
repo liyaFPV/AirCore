@@ -6,15 +6,16 @@
 #include <GyverNTP.h>
 
 struct WeatherRecord {
-    String time_str[23];
-    int temp[23];
-    int humidity[23];
-    int wind_speed[23];
-    int wind_deg[23];
-    int w_code[23];
-    String w_code_str[23];
+    String time_str[24];
+    int temp[24];
+    int humidity[24];
+    int wind_speed[24];
+    int wind_deg[24];
+    int w_code[24];
+    String w_code_str[24];
 };
 
 void MeteoInit();
 String getMeteo();
 void MeteoParsing();
+void getWeatherForecast(int count);

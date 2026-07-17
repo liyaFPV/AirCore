@@ -3,7 +3,7 @@
 WiFiClient client; 
 HTTPClient http;
 JsonDocument doc;
-WeatherRecord Weather[6];
+WeatherRecord Weather[3];
 
 void MeteoInit(){
     NTP.begin(5);
@@ -15,7 +15,7 @@ String getMeteo(){
         String url = "http://api.open-meteo.com/v1/forecast?latitude=" + String(LATITUDE) +
                      "&longitude=" + String(LONGITUDE) +
                      "&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m" +
-                     "&wind_speed_unit=ms&timezone=auto&forecast_days=7";
+                     "&wind_speed_unit=ms&timezone=auto&forecast_days=2";
         http.begin(client, url); 
         
         int httpResponseCode = http.GET();
@@ -78,15 +78,15 @@ void MeteoParsing(){
         int wind_speed = hourly["wind_speed_10m"][i].as<int>();
         int wind_deg = hourly["wind_direction_10m"][i].as<int>();
         int w_code = hourly["weather_code"][i].as<int>();
-        Weather[i/24].time_str[i/7]==time_str;
-        Weather[i/24].temp[i/7]==temp;
-        Weather[i/24].humidity[i/7]==humidity;
-        Weather[i/24].wind_speed[i/7]==wind_speed;
-        Weather[i/24].wind_deg[i/7]==wind_deg;
-        Weather[i/24].w_code[i/7]==w_code;
-        Weather[i/24].w_code_str[i/7]==weather_codeParsing(w_code);
+        Weather[i/24].time_str[i%24]=time_str;
+        Weather[i/24].temp[i%24]=temp;
+        Weather[i/24].humidity[i%24]=humidity;
+        Weather[i/24].wind_speed[i%24]=wind_speed;
+        Weather[i/24].wind_deg[i%24]=wind_deg;
+        Weather[i/24].w_code[i%24]=w_code;
+        Weather[i/24].w_code_str[i%24]=weather_codeParsing(w_code);
 
-
+        /*
             Serial.print("====");
             Serial.print(time_str);
             Serial.print("====");
@@ -106,5 +106,26 @@ void MeteoParsing(){
             Serial.print(w_code);
             Serial.print(", Weather: ");
             Serial.println(weather_codeParsing(w_code));
+            */
+    }
+}
+
+void getWeatherForecast(int count){
+    MeteoParsing();
+    int startHour = NTP.hour();
+    for(int i = startHour; i < startHour + count; i++){
+        int day = i / 24;
+        int hour = i % 24;
+        Serial.print(Weather[day].time_str[hour]);
+        Serial.print(" | Temp: ");
+        Serial.print(Weather[day].temp[hour]);
+        Serial.print("C, Humidity: ");
+        Serial.print(Weather[day].humidity[hour]);
+        Serial.print("%, Wind: ");
+        Serial.print(Weather[day].wind_speed[hour]);
+        Serial.print(" m/s, Dir: ");
+        Serial.print(Weather[day].wind_deg[hour]);
+        Serial.print("deg, ");
+        Serial.println(Weather[day].w_code_str[hour]);
     }
 }
