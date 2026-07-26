@@ -16,7 +16,7 @@ struct WeatherRecord {
     String w_code_str[24];
 };
 
-extern WeatherRecord Weather[3];
+extern WeatherRecord Weather[1];
 
 void MeteoInit();
 String getMeteo();
