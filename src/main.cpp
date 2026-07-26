@@ -108,6 +108,8 @@ void setup() {
 }
 
 void loop() {
+    checkWiFiReconnect();
+
     static unsigned long lastLedToggle = 0;
     if (millis() - lastLedToggle >= 500) {
         digitalWrite(led, !digitalRead(led));

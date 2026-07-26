@@ -7,3 +7,4 @@
 #include "display_api.h"
 
 void initWiFi();
+void checkWiFiReconnect();

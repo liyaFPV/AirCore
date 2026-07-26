@@ -41,20 +41,39 @@ void saveConfig(String newSSID, String newPASS) {
 
 
 // ===== Подключение =====
-bool connectWiFi() {
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid.c_str(), pass.c_str());
+#define WIFI_CONNECT_TIMEOUT 50
+#define WIFI_CONNECT_RETRIES 3
+#define WIFI_RETRY_DELAY_MS  2000
 
-    int attempts = 0;
-    while (WiFi.status() != WL_CONNECTED && attempts < 20) {
-        delay(300);
-        attempts++;
+bool connectWiFi() {
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_STA);
+
+    for (int attempt = 0; attempt < WIFI_CONNECT_RETRIES; attempt++) {
+        WiFi.begin(ssid.c_str(), pass.c_str());
+
+        int attempts = 0;
+        while (WiFi.status() != WL_CONNECTED && attempts < WIFI_CONNECT_TIMEOUT) {
+            delay(300);
+            attempts++;
+        }
+
+        if (WiFi.status() == WL_CONNECTED) {
+            return true;
+        }
+
+        WiFi.disconnect(true);
+        if (attempt < WIFI_CONNECT_RETRIES - 1) {
+            delay(WIFI_RETRY_DELAY_MS);
+        }
     }
-    return (WiFi.status() == WL_CONNECTED);
+    return false;
 }
 
 
-// ===== Режим настройки (БЛОКИРУЮЩИЙ) =====
+// ===== Режим настройки (с таймаутом) =====
+#define PORTAL_TIMEOUT_MS 120000
+
 void startConfigPortal() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP(deviceName.c_str(), WIFIAP_PASSWORD);
@@ -64,7 +83,13 @@ void startConfigPortal() {
     });
 
     server.on("/save", HTTP_POST, []() {
-        saveConfig(server.arg("ssid"), server.arg("pass"));
+        String newSSID = server.arg("ssid");
+        String newPASS = server.arg("pass");
+        if (newSSID.length() == 0) {
+            server.send(400, "text/html", "SSID is empty");
+            return;
+        }
+        saveConfig(newSSID, newPASS);
         server.send(200, "text/html", "OK");
         delay(1000);
         ESP.restart();
@@ -82,12 +107,20 @@ void startConfigPortal() {
     elink_setCursor(0, 30);
     elink_print("IP для настройки:192.168.4.1");
 
-
     elink_update();
-    while (true) {
+
+    unsigned long portalStart = millis();
+    while (millis() - portalStart < PORTAL_TIMEOUT_MS) {
         server.handleClient();
         delay(5);
     }
+
+    if (ssid.length() > 0 && connectWiFi()) {
+        startMDNS();
+        return;
+    }
+
+    ESP.restart();
 }
 
 
@@ -100,4 +133,42 @@ void initWiFi() {
         return;
     }
     startConfigPortal();
+}
+
+// ===== Переподключение в loop() =====
+#define RECONNECT_CHECK_MS  30000
+#define RECONNECT_TIMEOUT_MS 30000
+
+void checkWiFiReconnect() {
+    static unsigned long lastCheck = 0;
+    static bool wasConnected = false;
+
+    if (millis() - lastCheck < RECONNECT_CHECK_MS) return;
+    lastCheck = millis();
+
+    if (WiFi.status() == WL_CONNECTED) {
+        wasConnected = true;
+        return;
+    }
+
+    if (!wasConnected) return;
+
+    wasConnected = false;
+    Serial.println("WiFi lost, reconnecting...");
+
+    WiFi.disconnect(true);
+    WiFi.begin(ssid.c_str(), pass.c_str());
+
+    unsigned long start = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - start < RECONNECT_TIMEOUT_MS) {
+        delay(300);
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("WiFi reconnected");
+        startMDNS();
+    } else {
+        Serial.println("WiFi reconnect failed, rebooting...");
+        ESP.restart();
+    }
 }
