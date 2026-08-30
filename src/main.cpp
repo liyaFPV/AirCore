@@ -8,7 +8,7 @@
 #include "display_api.h"
 #include "menu.h"
 #include "graf.h"
-#include "debug.cpp"
+#include "debug.h"
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
 uButton button(butonPin);
@@ -114,14 +114,9 @@ void setup() {
 }
 
 void loop() {
-<<<<<<< HEAD
-    checkWiFiReconnect();
-
-=======
     #ifdef DEV_BUILD
         debugMemory();
     #endif
->>>>>>> 6ed5f13 (добавлена debug отладка)
     static unsigned long lastLedToggle = 0;
     if (millis() - lastLedToggle >= 500) {
         digitalWrite(led, !digitalRead(led));
