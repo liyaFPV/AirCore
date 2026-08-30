@@ -20,7 +20,6 @@
 #define WIFIAP_PASSWORD "123456789"
 
 //===== meteo =====
-
 #define LATITUDE 56.08
 #define LONGITUDE 54.27
 #define gmtOffset 5
@@ -34,5 +33,3 @@
 
 // ==== FW_VERSION ====
 #define FW_VERSION "1.2B"
-
-#define buzzerTimeout 30000
