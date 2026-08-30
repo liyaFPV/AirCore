@@ -8,7 +8,7 @@
 #include "display_api.h"
 #include "menu.h"
 #include "graf.h"
-
+#include "debug.cpp"
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
 uButton button(butonPin);
@@ -90,6 +90,11 @@ void readMHZ19() {
 }
 
 void setup() {
+    #ifdef DEV_BUILD
+        delay(500);
+        printDebugInfo();
+    #endif
+
     Serial.begin(115200);
     dht.begin();
     mhzSerial.begin(9600, SERIAL_8N1, MHZ_RX, MHZ_TX);
@@ -109,8 +114,14 @@ void setup() {
 }
 
 void loop() {
+<<<<<<< HEAD
     checkWiFiReconnect();
 
+=======
+    #ifdef DEV_BUILD
+        debugMemory();
+    #endif
+>>>>>>> 6ed5f13 (добавлена debug отладка)
     static unsigned long lastLedToggle = 0;
     if (millis() - lastLedToggle >= 500) {
         digitalWrite(led, !digitalRead(led));
@@ -131,15 +142,6 @@ void loop() {
         snprintf(line2, sizeof(line2), "Humidity: %.1f %%", humidity);
         snprintf(line3, sizeof(line3), "CO2: %d ppm (%s)", co2ppm, co2StateName(co2State));
         main_menu(int(co2ppm), int(humidity), int(temperature));
-        /*
-        elink_clear();
-        elink_setCursor(0, 0);
-        elink_print(String(line1));
-        elink_setCursor(0, 16);
-        elink_print(String(line2));
-        elink_setCursor(0, 32);
-        elink_print(String(line3));
-        elink_update();*/
     }
 
 }
