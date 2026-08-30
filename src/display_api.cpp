@@ -72,3 +72,12 @@ void elink_wakeUp(){
 void elink_setFont(const uint8_t *font) {
   u8g2_for_adafruit.setFont(font);
 }
+
+void elink_drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, bool transparent) {
+  if (transparent) {
+    display.fillRect(x, y, w, h, WHITE);
+    display.drawBitmap(x, y, bitmap, w, h, color);
+  } else {
+    display.drawBitmap(x, y, bitmap, w, h, color, WHITE);
+  }
+}

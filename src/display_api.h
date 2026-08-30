@@ -22,3 +22,4 @@ void elink_clear();//очистка дисплея
 void elink_sleep();//переход в спящий режим
 void elink_wakeUp();//выход из спящего режима
 void elink_setFont(const uint8_t *font);//выбор шрифта
+void elink_drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color=BLACK, bool transparent=false);

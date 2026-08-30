@@ -88,8 +88,7 @@ void main_menu(int PPM,int HUM,int TEM){
   int wHour = NTP.hour();
   int wDay = wHour / 24;
   int wH = wHour % 24;
-  draw_weather_widget(2, 65, Weather[wDay].temp[wH], Weather[wDay].wind_speed[wH],
-                      Weather[wDay].wind_deg[wH], Weather[wDay].w_code_str[wH], wH);
+  draw_weather_widget(2, 65, Weather[wDay].temp, Weather[wDay].wind_speed, Weather[wDay].wind_deg, Weather[wDay].w_code_str, wH);
 
   elink_update(); 
 }
@@ -108,9 +107,17 @@ static const unsigned char* get_weather_bits(String weatherStr) {
   return cloud_bits;
 }
 
-void draw_weather_widget(int x, int y, int temp, int windSpeed, int windDeg, String weatherStr, int hour) {
+void draw_weather_widget(int x, int y, int temp[], int windSpeed[], int windDeg[], String weatherStr[], int hour) {
   elink_drawRect(x,y,x+96,63,BLACK);
   elink_drawRect(x,y,x+96*2,63,BLACK);
   elink_drawRect(x,y,x+96*3,63,BLACK);
+
+  elink_drawBitmap(x+5,y+5,get_weather_bits(weatherStr[hour]),32,32);
+
+  elink_setCursor(x+40, y+20);
+  elink_setFont(u8g2_font_logisoso20_tn);
+  elink_print("-99");
+  elink_setCursor(x+80, y-7);
+  elink_setFont(u8g2_font_unifont_tf);
+  elink_print("°C");
 }
-  
