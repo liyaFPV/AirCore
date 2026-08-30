@@ -115,10 +115,18 @@ void draw_weather_widget(int x, int y, int temp[], int windSpeed[], int windDeg[
 
   elink_drawBitmap(x+5,y+5,get_weather_bits(weatherStr[hour]),32,32);
 
-  elink_setCursor(x+40, y+20);
+  elink_setCursor(x+38, y+20);
   elink_setFont(u8g2_font_logisoso20_tn);
-  elink_print("-99");
-  elink_setCursor(x+80, y-7);
+  elink_print(String(temp[hour]));
+  //elink_setCursor(x+80, y-7);
   elink_setFont(u8g2_font_unifont_tf);
   elink_print("°C");
+
+  elink_setCursor(x+2, y+34);
+  elink_print(String(windSpeed[hour]));
+  elink_print("m/s");
+
+  elink_setCursor(x+2, y+48);
+  elink_print(String(hour));
+  elink_print(":00");
 }

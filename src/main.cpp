@@ -13,11 +13,15 @@ DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);
 uButton button(butonPin);
 
+int page = 0;
+int maxpage=1;
 int co2ppm = 0;
 float temperature = 0;
 float humidity = 0;
+
 unsigned long buzzerTimer = 0;
 unsigned long lastSensorRead = 0;
+static unsigned long lastDisplayUpdate = 0;
 
 enum Co2State {
     CO2_STATE_UNKNOWN,
@@ -110,7 +114,7 @@ void setup() {
     initWiFi();
     MeteoInit();
     Serial.println("");
-    getWeatherForecast(5);
+    getWeatherForecast(gmtOffset);
     Serial.println("");
 }
 
@@ -118,41 +122,33 @@ void loop() {
     #ifdef DEV_BUILD
         debugMemory();
     #endif
-    static unsigned long lastLedToggle = 0;
-    if (millis() - lastLedToggle >= 500) {
-        digitalWrite(led, !digitalRead(led));
-        lastLedToggle = millis();
 
+    if(button.tick()){
+        if (button.click()){ 
+            page++;
+        }
+        lastDisplayUpdate=0;
     }
-    button.tick();
-    if (millis() - lastSensorRead >= 1000) {
+
+    if(page<0) page=maxpage;
+    if(page>maxpage) page=0;
+
+    if (millis() - lastSensorRead >= sensor_update_time) {
         temperature = dht.readTemperature();
         humidity = dht.readHumidity();
         readMHZ19();
         lastSensorRead = millis();
     }
 
-    // Обновляем ePaper только при смене данных, и не чаще раза в 10 секунд,
-    // иначе частый full refresh виснет в busy_wait() (Interrupt WDT на ESP32-C3).
-    static unsigned long lastDisplayUpdate = 0;
-    static int lastPPM = -1;
-    static int lastHUM = -1;
-    static int lastTEM = -1;
-    static int lastMinute = -1;
-    static bool firstDraw = true;
-
-    int minute = NTP.minute();
-    bool dataChanged = (co2ppm != lastPPM) || (int(humidity) != lastHUM) ||
-                       (int(temperature) != lastTEM) || (minute != lastMinute);
-
-    if ((dataChanged || firstDraw) && (millis() - lastDisplayUpdate >= 5000)) {
-        if (digitalRead(BUSY_PIN) == HIGH) return;
-        main_menu(int(co2ppm), int(humidity), int(temperature));
-        lastDisplayUpdate = millis();
-        lastPPM = co2ppm;
-        lastHUM = int(humidity);
-        lastTEM = int(temperature);
-        lastMinute = minute;
-        firstDraw = false;
+    switch (page){
+    case 0:
+        if (millis() - lastDisplayUpdate >= main_update_time) {
+            lastDisplayUpdate = millis();
+            main_menu(int(co2ppm), int(humidity), int(temperature));
+        }
+        break;
+    case 1:
+        Serial.println("NONE");
     }
+
 }

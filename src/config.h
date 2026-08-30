@@ -25,7 +25,14 @@
 #define LONGITUDE 54.27
 #define gmtOffset 5
 
+//===== timers =====
+#define main_update_time 5000
+#define sensor_update_time 5000
+
+#define graf_hour_update_time 18000
+#define graf_day_update_time 432000
+
 // ==== FW_VERSION ====
-#define FW_VERSION "1.1B"
+#define FW_VERSION "1.2B"
 
 #define buzzerTimeout 30000
