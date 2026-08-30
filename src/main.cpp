@@ -130,14 +130,29 @@ void loop() {
         humidity = dht.readHumidity();
         readMHZ19();
         lastSensorRead = millis();
-
-        char line1[64];
-        char line2[64];
-        char line3[96];
-        snprintf(line1, sizeof(line1), "Temp: %.1f C", temperature);
-        snprintf(line2, sizeof(line2), "Humidity: %.1f %%", humidity);
-        snprintf(line3, sizeof(line3), "CO2: %d ppm (%s)", co2ppm, co2StateName(co2State));
-        main_menu(int(co2ppm), int(humidity), int(temperature));
     }
 
+    // Обновляем ePaper только при смене данных, и не чаще раза в 10 секунд,
+    // иначе частый full refresh виснет в busy_wait() (Interrupt WDT на ESP32-C3).
+    static unsigned long lastDisplayUpdate = 0;
+    static int lastPPM = -1;
+    static int lastHUM = -1;
+    static int lastTEM = -1;
+    static int lastMinute = -1;
+    static bool firstDraw = true;
+
+    int minute = NTP.minute();
+    bool dataChanged = (co2ppm != lastPPM) || (int(humidity) != lastHUM) ||
+                       (int(temperature) != lastTEM) || (minute != lastMinute);
+
+    if ((dataChanged || firstDraw) && (millis() - lastDisplayUpdate >= 5000)) {
+        if (digitalRead(BUSY_PIN) == HIGH) return;
+        main_menu(int(co2ppm), int(humidity), int(temperature));
+        lastDisplayUpdate = millis();
+        lastPPM = co2ppm;
+        lastHUM = int(humidity);
+        lastTEM = int(temperature);
+        lastMinute = minute;
+        firstDraw = false;
+    }
 }

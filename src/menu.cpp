@@ -64,9 +64,10 @@ void draw_DATE(int x,int y, const uint8_t *font){
 
 void main_menu(int PPM,int HUM,int TEM){
   NTP.tick();
+  if(digitalRead(BUSY_PIN) == HIGH) return;
   elink_clear(); 
 
-  draw_watch(-2,0,u8g2_font_logisoso62_tn);//отрисовка цасы
+  draw_watch(-2,0,u8g2_font_logisoso62_tn);
 
   elink_setFont(u8g2_font_unifont_tf);
   const int16_t x_pos = 180;
