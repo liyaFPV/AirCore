@@ -18,12 +18,20 @@ void printDebugInfo()
     Serial.printf("[RESET] reason: %d", resetReason);
 
     switch (resetReason) {
+        case ESP_RST_UNKNOWN:
+            Serial.println(" (UNKNOWN)");
+            break;
+
         case ESP_RST_POWERON:
             Serial.println(" (POWER ON)");
             break;
 
+        case ESP_RST_EXT:
+            Serial.println(" (EXTERNAL PIN)");
+            break;
+
         case ESP_RST_SW:
-            Serial.println(" (SOFTWARE RESET)");
+            Serial.println(" (SOFTWARE RESET / REBOOT)");
             break;
 
         case ESP_RST_PANIC:
@@ -48,6 +56,10 @@ void printDebugInfo()
 
         case ESP_RST_DEEPSLEEP:
             Serial.println(" (DEEP SLEEP)");
+            break;
+
+        case ESP_RST_SDIO:
+            Serial.println(" (SDIO)");
             break;
 
         default:

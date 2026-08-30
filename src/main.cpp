@@ -90,12 +90,13 @@ void readMHZ19() {
 }
 
 void setup() {
+    Serial.begin(115200);
+
     #ifdef DEV_BUILD
         delay(500);
         printDebugInfo();
     #endif
 
-    Serial.begin(115200);
     dht.begin();
     mhzSerial.begin(9600, SERIAL_8N1, MHZ_RX, MHZ_TX);
     pinMode(buzzerPin, OUTPUT);
