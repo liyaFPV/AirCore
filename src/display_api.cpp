@@ -6,15 +6,17 @@ U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit;
 
 void elink_init() {
   #define ENABLE_GxEPD2_GFX 0
-  SPI.begin(CLK_PIN, -1, DIN_PIN, CS_PIN);
-
   pinMode(BUSY_PIN, INPUT);
   pinMode(RST_PIN, OUTPUT);
+  pinMode(DC_PIN, OUTPUT);
+  pinMode(CS_PIN, OUTPUT);
 
   digitalWrite(RST_PIN, LOW);
   delay(10);
   digitalWrite(RST_PIN, HIGH);
   delay(10);
+
+  SPI.begin(CLK_PIN, -1, DIN_PIN, -1);
 
   display.init(0);
   display.setRotation(1);

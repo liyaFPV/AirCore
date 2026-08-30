@@ -7,6 +7,7 @@
 #include <uButton.h>
 #include "display_api.h"
 #include "menu.h"
+#include "graf.h"
 
 DHT dht(DHTPIN, DHTTYPE);
 HardwareSerial mhzSerial(1);

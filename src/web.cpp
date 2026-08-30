@@ -70,10 +70,13 @@ bool connectWiFi() {
     return false;
 }
 
+<<<<<<< HEAD
 
 // ===== Режим настройки (с таймаутом) =====
 #define PORTAL_TIMEOUT_MS 120000
 
+=======
+>>>>>>> 98e5e70 (fix багов)
 void startConfigPortal() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP(deviceName.c_str(), WIFIAP_PASSWORD);
@@ -128,8 +131,7 @@ void startConfigPortal() {
 void initWiFi() {
     generateDeviceName();
     loadConfig();
-    if (ssid.length() > 0 && connectWiFi()) {
-        startMDNS();
+    if(connectWiFi()){
         return;
     }
     startConfigPortal();
