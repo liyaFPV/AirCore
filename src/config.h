@@ -15,8 +15,8 @@
 #define buzzerPin 2
 #define butonPin 0
 #define led 3
-// ==== Wi-Fi ====
 
+// ==== Wi-Fi ====
 #define WIFIAP_PASSWORD "123456789"
 
 //===== meteo =====
@@ -25,7 +25,7 @@
 #define gmtOffset 5
 
 //===== timers =====
-#define main_update_time 5000
+#define display_update_time 5000
 #define sensor_update_time 5000
 
 #define graf_hour_update_time 18000

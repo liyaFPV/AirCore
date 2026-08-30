@@ -119,15 +119,11 @@ void setup() {
 }
 
 void loop() {
-    #ifdef DEV_BUILD
-        debugMemory();
-    #endif
-
     if(button.tick()){
         if (button.click()){ 
             page++;
         }
-        lastDisplayUpdate=0;
+        lastDisplayUpdate=-1;
     }
 
     if(page<0) page=maxpage;
@@ -140,15 +136,15 @@ void loop() {
         lastSensorRead = millis();
     }
 
-    switch (page){
-    case 0:
-        if (millis() - lastDisplayUpdate >= main_update_time) {
+    if (millis() - lastDisplayUpdate >= display_update_time) {
+        switch (page){
+        case 0:
             lastDisplayUpdate = millis();
             main_menu(int(co2ppm), int(humidity), int(temperature));
+            break;
+        case 1:
+            Serial.println("NONE");
         }
-        break;
-    case 1:
-        Serial.println("NONE");
     }
 
 }
