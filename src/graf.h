@@ -6,3 +6,13 @@
 #include <Fonts/FreeSansBold24pt7b.h>
 #include <Fonts/FreeSans9pt7b.h>
 #include <GyverNTP.h>
+
+struct SensorData {
+    int CO2[200];
+    int HUM[200];
+    int TEM[200];
+    int index=0;
+};
+
+void write_data(int CO2, int HUM, int TEM);
+void test();

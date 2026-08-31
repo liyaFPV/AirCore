@@ -14,7 +14,7 @@ HardwareSerial mhzSerial(1);
 uButton button(butonPin);
 
 int page = 0;
-int maxpage=1;
+#define maxpage 1
 int co2ppm = 0;
 float temperature = 0;
 float humidity = 0;
@@ -134,6 +134,7 @@ void loop() {
         humidity = dht.readHumidity();
         readMHZ19();
         lastSensorRead = millis();
+        write_data(int(co2ppm), int(humidity), int(temperature));
     }
 
     if (millis() - lastDisplayUpdate >= display_update_time) {
@@ -143,7 +144,7 @@ void loop() {
             main_menu(int(co2ppm), int(humidity), int(temperature));
             break;
         case 1:
-            Serial.println("NONE");
+            test();
         }
     }
 
