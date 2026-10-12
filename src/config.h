@@ -26,10 +26,6 @@
 //===== LED =====
 #define LED_COUNT 4
 
-//===== WIFI =====
-#define WIFI_SSID "WIFI_SSID"
-#define WIFI_PASSWORD "WIFI_PASSWORD"
-
 //===== METEO =====
 extern double lat;
 extern double lon;
